@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Smart Age Calculator</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #10152f, #29245d, #110530);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    color: white;
+}
+
+.container {
+    background: rgba(255,255,255,0.10);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255,255,255,0.2);
+    padding: 30px;
+    border-radius: 20px;
+    width: 100%;
+    max-width: 480px;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.subtitle {
+    text-align: center;
+    color: #c9c8e9;
+    margin-bottom: 25px;
+    font-size: 14px;
+}
+
+label {
+    display: block;
+    margin-bottom: 10px;
+}
+
+input {
+    width: 100%;
+    padding: 14px;
+    border-radius: 10px;
+    border: none;
+    font-size: 16px;
+    margin-bottom: 15px;
+}
+
+button {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 10px;
+    background: #a78bfa;
+    color: #17133c;
+    font-weight: bold;
+    font-size: 15px;
+    cursor: pointer;
+    margin-bottom: 10px;
+}
+
+button:hover {
+    background: #c4b5fd;
+}
+
+.reset {
+    background: rgba(255,255,255,0.15);
+    color: white;
+}
+
+.result {
+    display: none;
+    margin-top: 20px;
+}
+
+.age {
+    text-align: center;
+    background: rgba(255,255,255,0.12);
+    padding: 20px;
+    border-radius: 15px;
+    margin-bottom: 15px;
+}
+
+.age h2 {
+    font-size: 28px;
+    color: #c4b5fd;
+    margin-bottom: 8px;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.item {
+    background: rgba(255,255,255,0.12);
+    padding: 15px;
+    border-radius: 12px;
+    text-align: center;
+}
+
+.item p {
+    color: #c9c8e9;
+    font-size: 12px;
+    margin-bottom: 8px;
+}
+
+.item h3 {
+    font-size: 18px;
+}
+
+footer {
+    text-align: center;
+    margin-top: 25px;
+    color: #c9c8e9;
+    font-size: 12px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>🎂 Age Calculator</h1>
+
+    <p class="subtitle">
+        Hitung umur kamu dengan mudah dan cepat!
+    </p>
+
+    <label for="tanggalLahir">Masukkan Tanggal Lahir</label>
+
+    <input type="date" id="tanggalLahir">
+
+    <button onclick="hitungUmur()">
+        Hitung Umur
+    </button>
+
+    <button class="reset" onclick="resetData()">
+        Reset
+    </button>
+
+    <div class="result" id="result">
+
+        <div class="age">
+            <h2 id="umur"></h2>
+            <p>Umur kamu saat ini</p>
+        </div>
+
+        <div class="grid">
+
+            <div class="item">
+                <p>Total Hari Hidup</p>
+                <h3 id="totalHari"></h3>
+            </div>
+
+            <div class="item">
+                <p>Hari Kelahiran</p>
+                <h3 id="hariLahir"></h3>
+            </div>
+
+            <div class="item">
+                <p>Zodiak</p>
+                <h3 id="zodiak"></h3>
+            </div>
+
+            <div class="item">
+                <p>Ulang Tahun Berikutnya</p>
+                <h3 id="ulangTahun"></h3>
+            </div>
+
+        </div>
+    </div>
+
+    <footer>
+        Smart Age Calculator © 2026
+    </footer>
+
+</div>
+
+<script>
+
+function hitungUmur() {
+
+    let input = document.getElementById("tanggalLahir").value;
+
+    if (!input) {
+        alert("Silakan masukkan tanggal lahir!");
+        return;
+    }
+
+    let [y, m, d] = input.split("-").map(Number);
+
+    let lahir = new Date(y, m - 1, d);
+    let sekarang = new Date();
+
+    sekarang.setHours(0, 0, 0, 0);
+
+    if (lahir > sekarang) {
+        alert("Tanggal lahir tidak boleh di masa depan!");
+        return;
+    }
+
+    let tahun = sekarang.getFullYear() - y;
+    let bulan = sekarang.getMonth() - (m - 1);
+    let hari = sekarang.getDate() - d;
+
+    if (hari < 0) {
+        bulan--;
+        hari += new Date(
+            sekarang.getFullYear(),
+            sekarang.getMonth(), 0
+        ).getDate();
+    }
+
+    if (bulan < 0) {
+        tahun--;
+        bulan += 12;
+    }
+
+    let total = Math.floor(
+        (sekarang - lahir) / 86400000
+    );
+
+    let namaHari = [
+        "Minggu", "Senin", "Selasa",
+        "Rabu", "Kamis", "Jumat", "Sabtu"
+    ];
+
+    let zodiak;
+    let tanggal = d;
+    let bulanLahir = m;
+
+    if ((bulanLahir == 3 && tanggal >= 21) ||
+        (bulanLahir == 4 && tanggal <= 19))
+        zodiak = "Aries";
+    else if ((bulanLahir == 4 && tanggal >= 20) ||
+        (bulanLahir == 5 && tanggal <= 20))
+        zodiak = "Taurus";
+    else if ((bulanLahir == 5 && tanggal >= 21) ||
+        (bulanLahir == 6 && tanggal <= 20))
+        zodiak = "Gemini";
+    else if ((bulanLahir == 6 && tanggal >= 21) ||
+        (bulanLahir == 7 && tanggal <= 22))
+        zodiak = "Cancer";
+    else if ((bulanLahir == 7 && tanggal >= 23) ||
+        (bulanLahir == 8 && tanggal <= 22))
+        zodiak = "Leo";
+    else if ((bulanLahir == 8 && tanggal >= 23) ||
+        (bulanLahir == 9 && tanggal <= 22))
+        zodiak = "Virgo";
+    else if ((bulanLahir == 9 && tanggal >= 23) ||
+        (bulanLahir == 10 && tanggal <= 22))
+        zodiak = "Libra";
+    else if ((bulanLahir == 10 && tanggal >= 23) ||
+        (bulanLahir == 11 && tanggal <= 21))
+        zodiak = "Scorpio";
+    else if ((bulanLahir == 11 && tanggal >= 22) ||
+        (bulanLahir == 12 && tanggal <= 21))
+        zodiak = "Sagitarius";
+    else if ((bulanLahir == 12 && tanggal >= 22) ||
+        (bulanLahir == 1 && tanggal <= 19))
+        zodiak = "Capricorn";
+    else if ((bulanLahir == 1 && tanggal >= 20) ||
+        (bulanLahir == 2 && tanggal <= 18))
+        zodiak = "Aquarius";
+    else
+        zodiak = "Pisces";
+
+    let berikutnya = new Date(
+        sekarang.getFullYear(), m - 1, d
+    );
+
+    if (berikutnya <= sekarang) {
+        berikutnya.setFullYear(
+            sekarang.getFullYear() + 1
+        );
+    }
+
+    let sisa = Math.ceil(
+        (berikutnya - sekarang) / 86400000
+    );
+
+    document.getElementById("umur").innerHTML =
+        tahun + " Tahun " + bulan + " Bulan " + hari + " Hari";
+
+    document.getElementById("totalHari").innerHTML =
+        total.toLocaleString("id-ID") + " Hari";
+
+    document.getElementById("hariLahir").innerHTML =
+        namaHari[lahir.getDay()];
+
+    document.getElementById("zodiak").innerHTML =
+        zodiak;
+
+    document.getElementById("ulangTahun").innerHTML =
+        sisa + " Hari Lagi";
+
+    document.getElementById("result").style.display =
+        "block";
+}
+
+function resetData() {
+    document.getElementById("tanggalLahir").value = "";
+    document.getElementById("result").style.display = "none";
+}
+
+</script>
+
+</body>
+</html>
